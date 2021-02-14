@@ -103,7 +103,7 @@ if __name__ == "__main__":
     parser.add_argument("--puppet", default='./test_data/google2.jpg')
     parser.add_argument("--video", default='./test_data/BirdsShort.mp4', type=str)
     parser.add_argument(
-        "--out",default="out.mp4", help="Out type"
+        "--out-result",default="out.mp4", help="Out type"
     )
     parser.add_argument("--project", default='./models/bilayer_model', type=str)
     args = parser.parse_args()
