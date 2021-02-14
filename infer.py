@@ -79,7 +79,10 @@ class InferenceWrapper(nn.Module):
         self.runner.apply(rn_utils.remove_spectral_norm)
 
         # Stickman/facemasks drawer
-        self.fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=True)
+        if self.args.num_gpus > 0:
+            self.fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=True)
+        else:
+            self.fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D,device='cpu',flip_input=True)
 
         self.net_seg = wrapper.SegmentationWrapper(self.args)
 
