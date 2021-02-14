@@ -57,7 +57,7 @@ def process(args):
     fourcc = cv2.VideoWriter_fourcc(*"avc1")
     width = 256
     height = 256
-    vout = cv2.VideoWriter(args.out+'tmp.mp4', fourcc, fps, (width,height))
+    vout = cv2.VideoWriter(args.out_video+'tmp.mp4', fourcc, fps, (width,height))
     
     count = 0
     prev_percent = 0
@@ -90,7 +90,7 @@ def process(args):
         vout.write(pred_img)
     vin.release()
     vout.release()
-    ##post_process_video(args.out+'tmp.mp4', args.video, args.out)
+    post_process_video(args.out_video+'tmp.mp4', args.video, args.out_video)
 
 if __name__ == "__main__":
     logging.basicConfig(
