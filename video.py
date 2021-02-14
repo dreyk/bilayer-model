@@ -43,6 +43,7 @@ def process(args):
         'enh_apply_masks': False,
         'inf_apply_masks': False}
 
+    logging.info("Loading nets")
     # Initialization
     module = InferenceWrapper(args_dict)
 
