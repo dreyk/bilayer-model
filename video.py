@@ -32,8 +32,8 @@ def to_image(img_tensor, seg_tensor=None):
 def process(args):
     num_gpus = 1 if torch.cuda.is_available() else 0
     args_dict = {
-        'project_dir': './models/bilayer_model',
-        'init_experiment_dir': './models/bilayer_model/runs/vc2-hq_adrianb_paper_main',
+        'project_dir': args.project,
+        'init_experiment_dir': args.project+'/runs/vc2-hq_adrianb_paper_main',
         'init_networks': 'identity_embedder, texture_generator, keypoints_embedder, inference_generator',
         'init_which_epoch': '2225',
         'num_gpus': num_gpus,
@@ -54,7 +54,7 @@ def process(args):
     fourcc = cv2.VideoWriter_fourcc(*"avc1")
     width = 256
     height = 256
-    vout = cv2.VideoWriter(args.out+'tmp.mp4', fourcc, fps, (width*2,height))
+    vout = cv2.VideoWriter(args.out+'tmp.mp4', fourcc, fps, (width,height))
     
     count = 0
     prev_percent = 0
@@ -65,10 +65,12 @@ def process(args):
         if count % 3 != 0:
             count += 1
             continue
+        count += 1
         p = int(count*100/frame_count)
         if p !=prev_percent:
             logging.info("Process: %d",p)
             prev_percent = p
+        logging.info('Frame: {}'.format(count))
         src = np.expand_dims(frame,axis=0)
         # Input data for intiialization and inference
         data_dict = {
@@ -85,7 +87,7 @@ def process(args):
         vout.write(pred_img)
     vin.release()
     vout.release()
-    post_process_video(args.out+'tmp.mp4', args.video, args.out)
+    ##post_process_video(args.out+'tmp.mp4', args.video, args.out)
 
 if __name__ == "__main__":
     logging.basicConfig(
@@ -103,5 +105,6 @@ if __name__ == "__main__":
     parser.add_argument(
         "--out",default="out.mp4", help="Out type"
     )
+    parser.add_argument("--project", default='./models/bilayer_model', type=str)
     args = parser.parse_args()
     process(args)
