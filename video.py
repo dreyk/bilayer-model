@@ -73,7 +73,6 @@ def process(args):
         if p !=prev_percent:
             logging.info("Process: %d",p)
             prev_percent = p
-        logging.info('Frame: {}'.format(count))
         src = np.expand_dims(frame,axis=0)
         # Input data for intiialization and inference
         data_dict = {
