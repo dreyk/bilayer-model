@@ -47,6 +47,8 @@ def process(args):
     # Initialization
     module = InferenceWrapper(args_dict)
 
+    logging.info("Prepare data")
+    
     trg = cv2.imread(args.puppet)
     vin = cv2.VideoCapture(args.video)
 
