@@ -100,10 +100,10 @@ def process(args):
             if start > next_brow + brow_duration:
                 next_brow = t + random.randint(5, 20)
                 brow_duration = random.randint(2, 10) / 50
-        elif start > next_brow:
-            a = brow_amp * random.randint(5, 10) / 10
-            next_landmark[17: 21, 1] = next_landmark[17: 21, 1] - a
-            next_landmark[22: 26, 1] = next_landmark[22: 26, 1] - a
+            elif start > next_brow:
+                a = brow_amp * random.randint(5, 10) / 10
+                next_landmark[17: 21, 1] = next_landmark[17: 21, 1] - a
+                next_landmark[22: 26, 1] = next_landmark[22: 26, 1] - a
         if (t - last_motion > 5):
                 a1_speed = (random.randint(0, 200) / 100 - 0)/5
                 a2_speed = (random.randint(0, 200) / 100 - 0)/5
