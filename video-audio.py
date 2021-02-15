@@ -184,7 +184,7 @@ def process(args):
             a3 = angle[2]
                 
         m = euler.euler2mat(a1, a2, a3)
-        #next_landmark = np.dot(m, next_landmark.T).T
+        next_landmark = np.dot(m, next_landmark.T).T
         poses = []
         next_landmark = next_landmark[:,0:2].astype(np.float32).copy()
         poses.append(torch.from_numpy(next_landmark).view(-1))
