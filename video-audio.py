@@ -173,7 +173,7 @@ def process(args):
                 track_index = 0
             a1 = angle[0]
             a2 = angle[1]
-            a3 = angle[3]
+            a3 = angle[2]
                 
         m = euler.euler2mat(a1, a2, a3)
         next_landmark = np.dot(m, next_landmark.T).T
