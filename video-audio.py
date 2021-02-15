@@ -135,8 +135,8 @@ def process(args):
         with torch.no_grad():
             next_landmark = mel2land(x, torch_land)[0]
         delta = next_landmark.data.cpu().numpy().copy()
-        #next_landmark = delta + landmark_norm
-        next_landmark = landmark_norm.copy()
+        next_landmark = delta + landmark_norm
+        #next_landmark = landmark_norm.copy()
         next_landmark = lnorm.invers_3d(next_landmark, transform)
         if start > next_blink + blink_duration:
             blink_duration = random.randint(2, 20) / 50
@@ -179,7 +179,7 @@ def process(args):
             a3 = angle[2]
                 
         m = euler.euler2mat(a1, a2, a3)
-        next_landmark = np.dot(m, next_landmark.T).T
+        #next_landmark = np.dot(m, next_landmark.T).T
         poses = []
         next_landmark = next_landmark[:,0:2].astype(np.float32).copy()
         poses.append(torch.from_numpy(next_landmark).view(-1))
