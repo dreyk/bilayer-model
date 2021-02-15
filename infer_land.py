@@ -160,6 +160,16 @@ class InferenceWrapper(nn.Module):
         return poses, imgs, segs, stickmen
 
     def forward(self, data_dict, crop_data=True, no_grad=True):
+        if no_grad:
+            with torch.no_grad():
+                self.runner(data_dict)
+
+        else:
+            self.runner(data_dict)
+
+        return self.runner.data_dict
+    
+    def forward_old(self, data_dict, crop_data=True, no_grad=True):
         if 'target_imgs' not in data_dict.keys():
             data_dict['target_imgs'] = None
 
