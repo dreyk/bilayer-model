@@ -15,6 +15,21 @@ import mel2land.audio as audio
 import speech.landmark_norm as lnorm
 from mel2land.model import LoadWav2Lip
 
+def post_process_video(tmp_file, src_file, dest_file):
+    command = [
+        'ffmpeg',
+        '-y',
+        '-i', tmp_file,
+        '-i', src_file,
+        '-map', '0:v',
+        '-map', '1:a',
+        '-c:v', 'copy',
+        '-c:a', 'aac',
+        dest_file
+    ]
+    cmd = subprocess.Popen(command, stderr=subprocess.STDOUT)
+    cmd.wait(60)
+    
 def to_image(img_tensor, seg_tensor=None):
     img_array = ((img_tensor.clamp(-1, 1).cpu().numpy() + 1) / 2).transpose(1, 2, 0) * 255
     
@@ -152,6 +167,7 @@ def process(args):
         pred_img = to_image(imgs[0, 0], segs[0, 0])
         vout.write(pred_img)
     vout.release()
+    post_process_video(args.out_video+'tmp.mp4', args.audio, args.out_video)
 
 if __name__ == "__main__":
     logging.basicConfig(
