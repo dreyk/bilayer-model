@@ -77,6 +77,10 @@ def process(args):
     last_motion = 0
     a1_speed = (random.randint(0, 200) / 100 - 0)/10
     a2_speed = (random.randint(0, 200) / 100 - 0)/10
+    next_blink = random.randint(5, 10)
+    blink_duration = random.randint(2, 20) / 50
+    next_brow = random.randint(5, 15)
+    brow_duration = random.randint(4, 30) / 50
     for count in range(frame_count):
         t = count/fps
         p = int(count*100/frame_count)
