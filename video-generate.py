@@ -96,6 +96,8 @@ def process(args):
         next_landmark = next_landmark[:,0:2].astype(np.float32).copy()
         poses.append(torch.from_numpy(next_landmark).view(-1))
         poses = torch.stack(poses, 0)[None]
+        if num_gpus>0:
+            poses = poses.cuda()
         data_dict['target_poses'] =  poses
         data_dict = module(data_dict)
 
