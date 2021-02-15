@@ -132,6 +132,7 @@ def process(args):
         
     time_reset = 0
     prev_lands = []
+    track_direction = 1
     for i in range(0, voice_content.shape[0] - 18, 3):
         t = count/fps
         p = int(count*100/frame_count)
@@ -178,9 +179,13 @@ def process(args):
             a3 = 0
         else:
             angle = track_angles[track_index]
-            track_index += 1
+            track_index += track_direction
             if track_index == track_angles.shape[0]:
-                track_index = 0
+                track_index -= 1
+                track_direction = -1
+            elif track_index == 0:
+                track_index += 1
+                track_direction = 1
             #start_index = track_index
             #rt = t - time_reset
             #for ti in range(start_index,track_times.shape[0]):
