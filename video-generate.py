@@ -73,6 +73,7 @@ def process(args):
     for i in range(res.shape[0]):
         landmark_first.append([source_land[i, 0], source_land[i, 1], res[i, 2] / (200 * scale)])
     landmark_first = np.array(landmark_first, dtype=np.float32)
+    brow_amp = np.max(np.abs(landmark_first[[37, 38], 1] - landmark_first[[41, 40], 1]))
     last_motion = 0
     a1_speed = (random.randint(0, 200) / 100 - 0)/10
     a2_speed = (random.randint(0, 200) / 100 - 0)/10
@@ -82,16 +83,32 @@ def process(args):
         if p !=prev_percent:
             logging.info("Process: %d",p)
             prev_percent = p
-        
+        start = t
+        next_landmark = landmark_first.copy()
+        if start > next_blink + blink_duration:
+            blink_duration = random.randint(2, 20) / 50
+            next_blink = start + random.randint(5, 15)
+        elif start > next_blink:
+            next_landmark[[37, 38], 1] = next_landmark[[41, 40], 1]
+            next_landmark[[43, 44], 1] = next_landmark[[47, 46], 1]
+
+        if brow_amp > 0:
+            if start > next_brow + brow_duration:
+                next_brow = t + random.randint(10, 40)
+                brow_duration = random.randint(2, 10) / 50
+        elif start > next_brow:
+            a = brow_amp * random.randint(5, 10) / 10
+            next_landmark[17: 21, 1] = next_landmark[17: 21, 1] - a
+            next_landmark[22: 26, 1] = next_landmark[22: 26, 1] - a
         if (t - last_motion > 5):
                 a1_speed = (random.randint(0, 200) / 100 - 0)/5
                 a2_speed = (random.randint(0, 200) / 100 - 0)/5
                 last_motion = t
-        a1 = 7 * math.pi / 180 * math.sin(t * a1_speed * 2 * math.pi/5)
-        a2 = 7 * math.pi / 180 * math.sin(t * a2_speed * 2 * math.pi/5)
+        a1 = 10 * math.pi / 180 * math.sin(t * a1_speed * 2 * math.pi)
+        a2 = 10 * math.pi / 180 * math.sin(t * a2_speed * 2 * math.pi)
         a3 = 0
         m = euler.euler2mat(a1, a2, a3)
-        next_landmark = np.dot(m, landmark_first.T).T
+        next_landmark = np.dot(m, next_landmark.T).T
         poses = []
         next_landmark = next_landmark[:,0:2].astype(np.float32).copy()
         poses.append(torch.from_numpy(next_landmark).view(-1))
