@@ -41,7 +41,6 @@ def to_image(img_tensor, seg_tensor=None):
     
 def process(args):
     num_gpus = 1 if torch.cuda.is_available() else 0
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     args_dict = {
         'project_dir': args.project,
         'init_experiment_dir': args.project+'/runs/vc2-hq_adrianb_paper_main',
@@ -59,7 +58,7 @@ def process(args):
     
     
     landmark_ref = np.load(args.land_ref)
-    mel2land = LoadWav2Lip(args.mel2land, cpu=device)
+    mel2land = LoadWav2Lip(args.mel2land, cpu=(num_gpus==0))
     wav_src, _ = librosa.load(args.audio, sr=16000)
     voice_content = audio.melspectrogram(wav_src)
     
