@@ -52,6 +52,7 @@ def process(args):
             count += 1
             continue
         t = count/fps
+        count+=1
         times.append(t)
         _, transform = lnorm.norm3d_t(landmark_first.copy(), landmark)
         a1, a2, a3 = euler.mat2euler(transform)
