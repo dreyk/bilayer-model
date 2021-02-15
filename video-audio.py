@@ -135,7 +135,9 @@ def process(args):
         with torch.no_grad():
             next_landmark = mel2land(x, torch_land)[0]
         delta = next_landmark.data.cpu().numpy().copy()
-        next_landmark = delta + landmark_norm
+        next_landmark = landmark_norm.copy()
+        next_landmark[48:68,:] += delta[48:68,:]
+        next_landmark[5:12,:] += delta[5:12,:]
         #next_landmark = landmark_norm.copy()
         next_landmark = lnorm.invers_3d(next_landmark, transform)
         if start > next_blink + blink_duration:
