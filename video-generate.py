@@ -122,6 +122,6 @@ if __name__ == "__main__":
         "--out_video",default="out.mp4", help="Out type"
     )
     parser.add_argument("--project", default='./models/bilayer_model', type=str)
-    parser.add_argument("--record_time", default=60, type=int)
+    parser.add_argument("--record_time", default=0.5, type=float)
     args = parser.parse_args()
     process(args)
