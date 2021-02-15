@@ -75,7 +75,8 @@ def process(args):
     
     module = InferenceWrapper(args_dict)
     trg = cv2.imread(args.puppet)
-    fps = 1000 / 16 / 3
+    step = 2
+    fps = 1000 / 16 / step
     window_size = int(fps/2)*2+1
     fourcc = cv2.VideoWriter_fourcc(*"avc1")
     width = 256
@@ -133,13 +134,13 @@ def process(args):
     time_reset = 0
     prev_lands = []
     track_direction = 1
-    for i in range(0, voice_content.shape[0] - 18, 3):
+    for i in range(0, voice_content.shape[0] - 18, step):
         t = count/fps
         p = int(count*100/frame_count)
         if p !=prev_percent:
             logging.info("Process: %d",p)
             prev_percent = p
-        count += 3
+        count += step
         start = t
         
         x = voice_content[i:i + 18]
