@@ -165,17 +165,20 @@ def process(args):
             a3 = 0
         else:
             angle = track_angles[track_index]
-            start_index = track_index
-            rt = t - time_reset
-            for ti in range(start_index,track_times.shape[0]):
-                if track_times[ti]<=rt:
-                    angle = track_angles[track_index]
-                    track_index = ti
-                else:
-                    break
-            if track_index==(track_times.shape[0]-1):
-                time_reset = t
+            track_index += 1
+            if track_index == track_angles.shape[0]:
                 track_index = 0
+            #start_index = track_index
+            #rt = t - time_reset
+            #for ti in range(start_index,track_times.shape[0]):
+            #    if track_times[ti]<=rt:
+            #        angle = track_angles[track_index]
+            #        track_index = ti
+            #    else:
+            #        break
+            #if track_index==(track_times.shape[0]-1):
+            #    time_reset = t
+            #    track_index = 0
             a1 = angle[0]
             a2 = angle[1]
             a3 = angle[2]
