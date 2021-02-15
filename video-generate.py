@@ -98,7 +98,7 @@ def process(args):
 
         if brow_amp > 0:
             if start > next_brow + brow_duration:
-                next_brow = t + random.randint(10, 40)
+                next_brow = t + random.randint(5, 20)
                 brow_duration = random.randint(2, 10) / 50
         elif start > next_brow:
             a = brow_amp * random.randint(5, 10) / 10
@@ -108,8 +108,8 @@ def process(args):
                 a1_speed = (random.randint(0, 200) / 100 - 0)/5
                 a2_speed = (random.randint(0, 200) / 100 - 0)/5
                 last_motion = t
-        a1 = 10 * math.pi / 180 * math.sin(t * a1_speed * 2 * math.pi)
-        a2 = 10 * math.pi / 180 * math.sin(t * a2_speed * 2 * math.pi)
+        a1 = 10 * math.pi / 180 * math.sin(t * a1_speed * 4 * math.pi)
+        a2 = 10 * math.pi / 180 * math.sin(t * a2_speed * 4 * math.pi)
         a3 = 0
         m = euler.euler2mat(a1, a2, a3)
         next_landmark = np.dot(m, next_landmark.T).T
