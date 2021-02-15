@@ -37,10 +37,10 @@ def process(args):
             break
         orig_img = resize(frame, 1024)
         src_img = orig_img.copy()
-        detected_faces = fa3d.face_detector.detect_from_image(src_img[:, :, ::-1])
+        detected_faces = fa3d.face_detector.detect_from_image(src_img[:, :, ::-1].copy())
         r = detected_faces[0]
         scale = (r[2] - r[0] + r[3] - r[1]) / 195
-        res = fa3d.get_landmarks(src_img, detected_faces=[r])[0]
+        res = fa3d.get_landmarks(src_img.copy(), detected_faces=[r])[0]
         landmark = []
         for i in range(res.shape[0]):
             landmark.append([res[i, 0] / src_img.shape[1], res[i, 1] / src_img.shape[0], res[i, 2] / (200 * scale)])
