@@ -55,6 +55,7 @@ def process(args):
         times.append(t)
         _, transform = lnorm.norm3d_t(landmark_first.copy(), landmark)
         a1, a2, a3 = euler.mat2euler(transform)
+        logging.info("{}-{}-{}".format(a1,a2,a3))
         angles.append([a1,a2,a3])
         
     vin.release()
