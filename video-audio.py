@@ -85,7 +85,7 @@ def process(args):
     
     count = 0
     prev_percent = 0
-    frame_count = int((voice_content.shape[0] - 18)/3)
+    frame_count = int((voice_content.shape[0] - 18))
     
     (source_poses, 
          source_imgs, 
