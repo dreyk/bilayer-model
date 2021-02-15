@@ -14,6 +14,7 @@ import librosa
 import mel2land.audio as audio
 import speech.landmark_norm as lnorm
 from mel2land.model import LoadWav2Lip
+from scipy.signal import savgol_filter
 
 def post_process_video(tmp_file, src_file, dest_file):
     command = [
@@ -38,7 +39,17 @@ def to_image(img_tensor, seg_tensor=None):
         img_array = img_array * seg_array + 255. * (1 - seg_array)
 
     return img_array.astype(np.uint8)
-    
+
+def filter(lands,window_size):
+    if len(lands)<window_size:
+        return lands[-1]
+    fl = np.array(lands,np.float32)
+    fl = fl.reshape((-1, 204))
+    fl[:, :36 * 3] = savgol_filter(fl[:, :36 * 3], window_size, 2, axis=0)
+    fl[:, 36*3:] = savgol_filter(fl[:, 36*3:], 7, 3, axis=0)
+    fl = fl.reshape((-1, 68, 3)).astype(np.float32)
+    return fl[-1]
+
 def process(args):
     num_gpus = 1 if torch.cuda.is_available() else 0
     args_dict = {
@@ -65,6 +76,7 @@ def process(args):
     module = InferenceWrapper(args_dict)
     trg = cv2.imread(args.puppet)
     fps = 1000 / 16 / 3
+    window_size = int(fps/2)*2+1
     fourcc = cv2.VideoWriter_fourcc(*"avc1")
     width = 256
     height = 256
@@ -119,6 +131,7 @@ def process(args):
         track_times = None
         
     time_reset = 0
+    prev_lands = []
     for i in range(0, voice_content.shape[0] - 18, 3):
         t = count/fps
         p = int(count*100/frame_count)
@@ -185,6 +198,11 @@ def process(args):
                 
         m = euler.euler2mat(a1, a2, a3)
         next_landmark = np.dot(m, next_landmark.T).T
+        prev_lands.append(next_landmark)
+        next_landmark = filter(prev_lands,window_size)
+        if len(prev_lands)>window_size:
+            prev_lands.pop(0)
+            
         poses = []
         next_landmark = next_landmark[:,0:2].astype(np.float32).copy()
         poses.append(torch.from_numpy(next_landmark).view(-1))
