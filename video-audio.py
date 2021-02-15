@@ -109,6 +109,16 @@ def process(args):
     torch_land = torch.tensor(landmark_norm[np.newaxis])
     if num_gpus>0:
         torch_land = torch_land.cuda()
+    track_index = 0
+    if args.track is not None:
+        npzfile = np.load(args.track)
+        track_angles = npzfile['angles']
+        track_times = npzfile['times']
+    else:
+        track_angles = None
+        track_times = None
+        
+        
     for i in range(0, voice_content.shape[0] - 18, 3):
         t = count/fps
         p = int(count*100/frame_count)
@@ -142,13 +152,29 @@ def process(args):
                 a = brow_amp * random.randint(5, 10) / 10
                 next_landmark[17: 21, 1] = next_landmark[17: 21, 1] - a
                 next_landmark[22: 26, 1] = next_landmark[22: 26, 1] - a
-        if (t - last_motion > 5):
-                a1_speed = (random.randint(0, 200) / 100 - 0)/5
-                a2_speed = (random.randint(0, 200) / 100 - 0)/5
-                last_motion = t
-        a1 = 10 * math.pi / 180 * math.sin(t * a1_speed * 4 * math.pi)
-        a2 = 10 * math.pi / 180 * math.sin(t * a2_speed * 4 * math.pi)
-        a3 = 0
+        if track_times is None:
+            if (t - last_motion > 5):
+                    a1_speed = (random.randint(0, 200) / 100 - 0)/5
+                    a2_speed = (random.randint(0, 200) / 100 - 0)/5
+                    last_motion = t
+            a1 = 10 * math.pi / 180 * math.sin(t * a1_speed * 4 * math.pi)
+            a2 = 10 * math.pi / 180 * math.sin(t * a2_speed * 4 * math.pi)
+            a3 = 0
+        else:
+            angle = track_angles[track_index]
+            start_index = track_index
+            for ti in range(start_index,track_times.shape[0]):
+                if track_times[ti]<=t:
+                    angle = track_angles[track_index]
+                    track_index = ti
+                else:
+                    break
+            if track_index==(track_times.shape[0]-1):
+                track_index = 0
+            a1 = angle[0]
+            a2 = angle[1]
+            a3 = angle[3]
+                
         m = euler.euler2mat(a1, a2, a3)
         next_landmark = np.dot(m, next_landmark.T).T
         poses = []
@@ -187,5 +213,6 @@ if __name__ == "__main__":
     parser.add_argument("--mel2land", default=None, type=str)
     parser.add_argument("--land_ref", default=None, type=str)
     parser.add_argument("--audio", default='./test_data/cnn.wav', type=str)
+    parser.add_argument("--track", default=None, type=str)
     args = parser.parse_args()
     process(args)
